@@ -89,3 +89,21 @@
     display: inline-block;
     margin-left: 10px;
 }
+
+table {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+td {
+    border: 1px solid black;
+}
+
+th {
+    background-color: #AAA;
+}
+
+.book-table {
+    table-layout: auto;
+    width: 100%;
+}
