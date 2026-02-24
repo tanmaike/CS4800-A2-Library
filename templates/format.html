@@ -6,111 +6,186 @@
     <style>
         body { 
             font-family: Garamond, sans-serif; 
-            margin: 20px; 
         }
-        th {
+        .body-within-body {
+            margin-left: 20px; 
+            margin-right: 20px; 
+            margin-bottom: 20px; 
+            margin-top: 0px; 
+        }
+        h3 {
+            background-color: #597ad5;
+            color: #FFF;
+            padding: 16px;
             border: 1px solid black;
-            background-color:#ddd;
+            margin: 0px;
+            margin-top: -8px;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
         }
-
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
         td {
             border: 1px solid black;
+            padding: 16px;
             text-align: center;
+        }
+        tr:nth-child(even){background-color: #f2f2f2;}
+        tr:hover {background-color: #ddd;}
+        th {
+            background-color: #597ad5;
+            color: #FFF;
+            padding: 16px;
+            border: 1px solid black;
+        }
+        .search-container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            flex: 2;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .search-select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .search-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .page-bottom {
+            margin: 0px;
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            flex-wrap: wrap;
+            align-items: center;
+            text-align: center;
+            justify-content: center;
         }
     </style>
 </head>
 <body>
     <h3>Welcome to the Mini Fictional Online Library!</h3>
     
-    <h4>Our Purpose</h4>
-    <p>As a small view into the world of literature, the Mini Fictional Online Library prides itself as a pioneer of maintaing a vast amount of works from various people around the world! Take a look, and see what works!</p>
-    
-    <div class="search-container">
-        <form method="GET" action="/">
-            <div class="search-row">
-                <h4>Search</h4>
-                <input type="text" name="q" class="search-input" 
-                       placeholder="Search books by title, author, ISBN, or genre..." 
-                       value="{{ request.args.get('q', '') }}">
-                <select name="field" class="search-select">
-                    <option value="all" {% if request.args.get('field') == 'all' %}selected{% endif %}>All Fields</option>
-                    <option value="title" {% if request.args.get('field') == 'title' %}selected{% endif %}>Title</option>
-                    <option value="author" {% if request.args.get('field') == 'author' %}selected{% endif %}>Author</option>
-                    <option value="isbn" {% if request.args.get('field') == 'isbn' %}selected{% endif %}>ISBN</option>
-                </select>
-            </div>
-            
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label>Genre:</label>
-                    <select name="genre">
-                        <option value="">All Genres</option>
-                        {% set genres = ['Academic', 'Horror', 'Comedy', 'Crime', 'Historical Fiction', 
-                                        'Nonfiction', 'Biography', 'Science Fiction', 'Romance'] %}
-                        {% for g in genres %}
-                            <option value="{{ g }}" {% if request.args.get('genre') == g %}selected{% endif %}>{{ g }}</option>
-                        {% endfor %}
+    <div class=".body-within-body">
+        <h4>Our Purpose</h4>
+        <p>As a small view into the world of literature, the Mini Fictional Online Library prides itself as a pioneer of maintaing a vast amount of works from various people around the world! Take a look, and see what works!</p>
+        
+        <div class="search-container">
+            <form method="GET" action="/">
+                <div class="search-row">
+                    <h4>Search</h4>
+                    <input type="text" name="q" class="search-input" 
+                        placeholder="Search books by title, author, ISBN, or genre..." 
+                        value="{{ request.args.get('q', '') }}">
+                    <select name="field" class="search-select">
+                        <option value="all" {% if request.args.get('field') == 'all' %}selected{% endif %}>All Fields</option>
+                        <option value="title" {% if request.args.get('field') == 'title' %}selected{% endif %}>Title</option>
+                        <option value="author" {% if request.args.get('field') == 'author' %}selected{% endif %}>Author</option>
+                        <option value="isbn" {% if request.args.get('field') == 'isbn' %}selected{% endif %}>ISBN</option>
                     </select>
                 </div>
                 
-                <div class="filter-group">
-                    <label>Rating:</label>
-                    <select name="rating">
-                        <option value="">All Ratings</option>
-                        {% set ratings = ['All Ages', 'Young Adult', 'Adult'] %}
-                        {% for r in ratings %}
-                            <option value="{{ r }}" {% if request.args.get('rating') == r %}selected{% endif %}>{{ r }}</option>
-                        {% endfor %}
-                    </select>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>Genre:</label>
+                        <select name="genre">
+                            <option value="">All Genres</option>
+                            {% set genres = ['Academic', 'Horror', 'Comedy', 'Crime', 'Historical Fiction', 
+                                            'Nonfiction', 'Biography', 'Science Fiction', 'Romance'] %}
+                            {% for g in genres %}
+                                <option value="{{ g }}" {% if request.args.get('genre') == g %}selected{% endif %}>{{ g }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Rating:</label>
+                        <select name="rating">
+                            <option value="">All Ratings</option>
+                            {% set ratings = ['All Ages', 'Young Adult', 'Adult'] %}
+                            {% for r in ratings %}
+                                <option value="{{ r }}" {% if request.args.get('rating') == r %}selected{% endif %}>{{ r }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Pages:</label>
+                        <input type="number" name="min_pages" placeholder="Min" value="{{ request.args.get('min_pages', '') }}" style="width: 70px;">
+                        <span>-</span>
+                        <input type="number" name="max_pages" placeholder="Max" value="{{ request.args.get('max_pages', '') }}" style="width: 70px;">
+                    </div>
+                    
+                    <button type="submit" class="search-button">Search</button>
+                    <a href="/" class="reset-button">Reset Query</a>
+                    <a href="/addbook" class="add-book-btn">Add New Book</a>
                 </div>
-                
-                <div class="filter-group">
-                    <label>Pages:</label>
-                    <input type="number" name="min_pages" placeholder="Min" value="{{ request.args.get('min_pages', '') }}" style="width: 70px;">
-                    <span>-</span>
-                    <input type="number" name="max_pages" placeholder="Max" value="{{ request.args.get('max_pages', '') }}" style="width: 70px;">
-                </div>
-                
-                <button type="submit" class="search-button">Search</button>
-                <a href="/" class="reset-button">Reset Query</a>
-                <a href="/addbook" class="add-book-btn">Add New Book</a>
-            </div>
-        </form>
+            </form>
+        </div>
+        
+        <div class="results-count">
+            Found {{ books|length }} book(s)
+        </div>
+        
+        {% if books %}
+        <table class="book-table">
+            <thead>
+                <tr>
+                    <th>ISBN</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Year</th>
+                    <th>Genre</th>
+                    <th>Rating</th>
+                    <th>Pages</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td>{{ book.isbn }}</td>
+                    <td><b>{{ book.name }}</b></td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.yearPublished }}</td>
+                    <td>{{ book.genre }}</td>
+                    <td>{{ book.rating }}</td>
+                    <td>{{ book.pages }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No books found matching your search criteria.</p>
+        {% endif %}
+        <div class="page-bottom">
+            <p>Created by Miah Terrazas, c. 2026</p>
+            <p><a href="https://github.com/tanmaike/CS4800-A2-Library">Github</a></p>
+        </div>
     </div>
-    
-    <div class="results-count">
-        Found {{ books|length }} book(s)
-    </div>
-    
-    {% if books %}
-    <table class="book-table">
-        <thead>
-            <tr>
-                <th>ISBN</th>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Year</th>
-                <th>Genre</th>
-                <th>Rating</th>
-                <th>Pages</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for book in books %}
-            <tr>
-                <td>{{ book.isbn }}</td>
-                <td>{{ book.name }}</td>
-                <td>{{ book.author }}</td>
-                <td>{{ book.yearPublished }}</td>
-                <td>{{ book.genre }}</td>
-                <td>{{ book.rating }}</td>
-                <td>{{ book.pages }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>No books found matching your search criteria.</p>
-    {% endif %}
 </body>
 </html>
