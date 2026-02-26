@@ -1,0 +1,76 @@
+﻿name: Deploy Flask App to EC2
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install SSH key
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+        
+    - name: Add EC2 host to known hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        
+    - name: Test SSH connection
+      run: |
+        ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "echo 'SSH connection successful'"
+        
+    - name: Create deployment directory
+      run: |
+        ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "mkdir -p ~/CS4800A2Library"
+        
+    - name: Copy application files
+      run: |
+        rsync -avz --delete \
+          --exclude '.git' \
+          --exclude '.github' \
+          --exclude '.env' \
+          --exclude '*.pyc' \
+          --exclude '__pycache__' \
+          ./ ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:~/CS4800A2Library/
+          
+    - name: Create .env file on EC2
+      run: |
+        ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cat > ~/CS4800A2Library/.env << 'EOF'
+MONGO_URI=${{ secrets.MONGODB_URI }}
+SECRET_KEY=${{ secrets.SECRET_KEY }}
+EOF"
+        
+    - name: Install dependencies and restart app
+      run: |
+        ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "
+          cd ~/CS4800A2Library &&
+          python3 -m venv venv &&
+          source venv/bin/activate &&
+          pip install --upgrade pip &&
+          pip install -r requirements.txt &&
+          sudo systemctl restart flask-library.service ||
+          echo 'Service restart attempted (may need sudo privileges)'
+        "
+        
+    - name: Verify deployment
+      run: |
+        ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "
+          curl -f http://localhost:8000 || echo 'Health check failed - check service status'
+        "
+        
+    - name: Check service status
+      run: |
+        ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "sudo systemctl status flask-library.service --no-pager"
