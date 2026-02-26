@@ -34,7 +34,7 @@ jobs:
         
     - name: Create deployment directory
       run: |
-        ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "mkdir -p ~/CS4800A2Library"
+        ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "mkdir -p ~/CS4800-A2-Library"
         
     - name: Copy application files
       run: |
@@ -44,11 +44,11 @@ jobs:
           --exclude '.env' \
           --exclude '*.pyc' \
           --exclude '__pycache__' \
-          ./ ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:~/CS4800A2Library/
+          ./ ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:~/CS4800-A2-Library/
           
     - name: Create .env file on EC2
       run: |
-        ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cat > ~/CS4800A2Library/.env << 'EOF'
+        ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "cat > ~/CS4800-A2-Library/.env << 'EOF'
 MONGO_URI=${{ secrets.MONGODB_URI }}
 SECRET_KEY=${{ secrets.SECRET_KEY }}
 EOF"
@@ -56,7 +56,7 @@ EOF"
     - name: Install dependencies and restart app
       run: |
         ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "
-          cd ~/CS4800A2Library &&
+          cd ~/CS4800-A2-Library &&
           python3 -m venv venv &&
           source venv/bin/activate &&
           pip install --upgrade pip &&
