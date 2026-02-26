@@ -28,7 +28,6 @@ except Exception as e:
 
 @app.route("/")
 def library_welcome():
-    # Get search parameters from URL
     search_query = request.args.get('q', '').lower()
     search_field = request.args.get('field', 'all')
     min_pages = request.args.get('min_pages', type=int)
@@ -36,7 +35,6 @@ def library_welcome():
     genre = request.args.get('genre', '')
     rating = request.args.get('rating', '')
     
-    # Build MongoDB query
     query = {}
     
     if search_query:
@@ -54,7 +52,6 @@ def library_welcome():
                 {"genre": {"$regex": search_query, "$options": "i"}}
             ]
     
-    # Apply additional filters
     if min_pages or max_pages:
         query["pages"] = {}
         if min_pages:
@@ -68,10 +65,9 @@ def library_welcome():
     if rating:
         query["rating"] = {"$regex": rating, "$options": "i"}
     
-    # Execute query
     try:
         books = list(mongo.db.books.find(query))
-        # Convert ObjectId to string for template
+        
         for book in books:
             book['_id'] = str(book['_id'])
         print(f"Found {len(books)} books")
